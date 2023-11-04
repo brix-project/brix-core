@@ -27,6 +27,8 @@ class BrixEnvFactorySingleton
         while (true) {
             $brixFile = $curDir->withFileName(".brix.yml");
             if ($brixFile->exists()) {
+                if ($brixFile->get_contents() === "")
+                    $brixFile->set_contents("version: '1.0'");
                 $brixConfig = new BrixConfig($brixFile);
                 break;
             }
