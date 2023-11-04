@@ -1,7 +1,7 @@
 # brix-core
 
 ```
-composer install brix
+composer install brixlab/core
 ```
 
 
