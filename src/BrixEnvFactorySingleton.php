@@ -27,7 +27,7 @@ class BrixEnvFactorySingleton
         while (true) {
             $brixFile = $curDir->withFileName(".brix.yml");
             if ($brixFile->exists()) {
-                $brixConfig = new BrixConfig($brixFile->get_yaml());
+                $brixConfig = new BrixConfig($brixFile);
                 break;
             }
             $curDir = $curDir->withParentDir();
@@ -46,8 +46,6 @@ class BrixEnvFactorySingleton
             KeyStore::Get(),
             $brixConfig,
             $curDir,
-            $curDir->withRelativePath($brixConfig->output_dir)->asDirectory(),
-            $curDir->withRelativePath($brixConfig->templates_dir)->asDirectory(),
             $contextCombined
         );
     }
