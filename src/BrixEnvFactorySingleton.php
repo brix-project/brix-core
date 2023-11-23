@@ -39,6 +39,11 @@ class BrixEnvFactorySingleton
         /* @var $brixConfig BrixConfig */
         $rootDir = $curDir;
 
+        $includeFile = $rootDir->withFileName("brix-autoload.php");
+        if ($includeFile->exists()) {
+            require_once $includeFile;
+        }
+        
         $contextCombined = $brixConfig->context ?? "";
         if (isset ($brixConfig->context_file)) {
             $contextCombined .= "\n" . phore_file($brixConfig->context_file)->get_contents();

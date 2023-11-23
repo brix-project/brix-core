@@ -21,3 +21,7 @@ class SomeFunctionality extends \Brix\Core\AbstractBrixCommand {
 ```
 
 
+## Brix `brix-autoload.php` File
+
+Register custom commands and plugins in the `brix-autoload.php` file:
+
