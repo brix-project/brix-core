@@ -31,6 +31,8 @@ class BrixEnv
         return new LackOpenAiFacet($this->getOpenAiApi());
     }
 
+
+
     public function getState(string $scope) : BrixState {
         return new BrixState($this->rootDir->withFileName(".brix.state.yml"), $scope);
     }
