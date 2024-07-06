@@ -34,7 +34,7 @@ class BrixEnvFactorySingleton
             }
             $curDir = $curDir->withParentDir();
             if ((string)$curDir === "/")
-                throw new \InvalidArgumentException("Cannot find .brix.yml in current or parent directories.");
+                throw new \InvalidArgumentException("Cannot find .brix.yml in current or parent directories. Please create a '.brix.yml' file. (it will be initialized on next brix call)");
         }
         /* @var $brixConfig BrixConfig */
         $rootDir = $curDir;
@@ -43,7 +43,7 @@ class BrixEnvFactorySingleton
         if ($includeFile->exists()) {
             require_once $includeFile;
         }
-        
+
         $contextCombined = $brixConfig->context ?? "";
         if (isset ($brixConfig->context_file)) {
             $contextCombined .= "\n" . phore_file($brixConfig->context_file)->get_contents();
