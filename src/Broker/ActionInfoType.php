@@ -10,6 +10,12 @@ class ActionInfoType
 
         public string $desc,
 
+        /**
+         * @var class-string
+         */
+        public string $inputClassName,
+
+
         public string $inputSchema
     )
     {

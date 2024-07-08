@@ -2,6 +2,8 @@
 
 namespace Brix\Core\Broker;
 
+use Brix\Core\Broker\Message\ContextMsg;
+
 interface BrokerActionInterface
 {
 
@@ -14,6 +16,8 @@ interface BrokerActionInterface
     public function getOutputClass() : string;
 
     public function getStateClass() : string;
+
+    public function needsContext() : bool;
 
     public function performAction(object $input, Broker $broker) : BrokerActionResponse;
 

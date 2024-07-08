@@ -1,14 +1,14 @@
 <?php
 
 
-namespace Leuffen\Brix;
+namespace Brix\Core;
 
 
 
 use Phore\Cli\CliDispatcher;
 
 
-
+CliDispatcher::addClass(Action::class);
 
 
 

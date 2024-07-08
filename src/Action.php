@@ -1,9 +1,9 @@
 <?php
 
-namespace Leuffen\Brix;
+namespace Brix\Core;
 
 use Brix\Core\Broker\Broker;
-use Leuffen\Brix\Business\AbstractBrixCommand;
+use Brix\Core\Broker\CliDoCmd;
 use Phore\Cli\Output\Out;
 
 class Action extends AbstractBrixCommand
@@ -15,7 +15,20 @@ class Action extends AbstractBrixCommand
         $broker = Broker::getInstance();
         $actions = $broker->listActions();
 
-        Out::Table($actions, $actions);
+        Out::Table($actions, false, ["actionName", "desc"]);
     }
+
+
+
+    public function do($argv, string $contextId = null) {
+
+        $broker = Broker::getInstance();
+
+
+        $cmd = new CliDoCmd($broker);
+        $cmd->run($argv, $contextId);
+
+    }
+
 
 }

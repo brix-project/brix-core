@@ -42,7 +42,7 @@ class FileContextStorageDriver
         return $data[$actionId] ?? null;
     }
 
-    public function setData(string $actionId, $value) : void
+    public function setData(string $actionId, mixed $value) : void
     {
         $data = $this->getStorageFile($this->selectedContextId)->get_yaml();
         $data[$actionId] = $value;

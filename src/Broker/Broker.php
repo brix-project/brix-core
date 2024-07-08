@@ -3,7 +3,9 @@
 namespace Brix\Core\Broker;
 use Brix\Core\BrixEnvFactorySingleton;
 use Brix\Core\Broker\Context\FileContextStorageDriver;
+use Brix\Core\Broker\Message\ContextMsg;
 use Brix\Core\Type\BrixEnv;
+use Lack\OpenAi\Helper\JsonSchemaGenerator;
 
 class Broker
 {
@@ -34,19 +36,45 @@ class Broker
     }
 
 
+
+
     /**
      * @return ActionInfoType[]
      */
     public function listActions() : array
     {
         $ret = [];
-        foreach ($this->actions as $actionName => $action) {
 
-            $ret[] = new ActionInfoType($actionName, $action->getDescription(), $action->getInputClass());
+        foreach ($this->actions as $actionName => $action) {
+            $ret[] = $this->getActionInfo($actionName);
         }
         return $ret;
     }
 
+
+    public function getActionInfo($actionName) {
+         $generator = new JsonSchemaGenerator();
+         $action = $this->actions[$actionName] ?? throw new \InvalidArgumentException("Action with name '$actionName' not found.");
+         $inputSchema = $generator->convertToJsonSchema($action->getInputClass());
+         return new ActionInfoType($actionName, $action->getDescription(), $action->getInputClass(), $inputSchema);
+    }
+
+
+
+    public function performAction (object $action) : BrokerActionResponse {
+        $actionName = $action->action_name ?? throw new \InvalidArgumentException("Missing 'action_name' in action object.");
+        $action = $this->actions[$actionName] ?? throw new \InvalidArgumentException("Action with name '$actionName' not found.");
+        $contextId = $action->context_id ?? null;
+        if ($action->needsContext() && $contextId === null)
+            throw new \InvalidArgumentException("Action '$actionName' requires a context id.");
+
+        $result = $action->performAction($action, $this);
+        foreach ($result->context_updates as $context_update) {
+            $this->contextStorageDriver->selectContext($contextId);
+            $this->contextStorageDriver->setData($actionName, $context_update);
+        }
+        return $result;
+    }
 
 
 

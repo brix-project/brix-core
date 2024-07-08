@@ -4,11 +4,15 @@ namespace Brix\Core\Broker\Message;
 
 class ContextMsg
 {
-    public string $actionId;
 
-    public string $key;
+    public function __construct(
+        public string $actionId,
 
-    public string $desc;
+        public string $key,
 
-    public string $value;
+        public string $desc,
+
+        public string $value
+    ) {}
+
 }

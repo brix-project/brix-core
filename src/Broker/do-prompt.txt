@@ -1,0 +1,25 @@
+
+
+The expected output should be in the following json-schema format:
+
+```
+{{output_schema}}
+```
+
+Follow instructions included in the description of the schema.
+
+To generate the output, use the following data as input:
+
+```
+{{argument_string}}
+```
+
+and the following context data (provided in json format):
+
+```
+{{context_json}}
+```
+
+---
+
+Output the content generated from the input data.
