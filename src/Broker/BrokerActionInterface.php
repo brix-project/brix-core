@@ -19,6 +19,6 @@ interface BrokerActionInterface
 
     public function needsContext() : bool;
 
-    public function performAction(object $input, Broker $broker) : BrokerActionResponse;
+    public function performAction(object $input, Broker $broker, ?string $contextId) : BrokerActionResponse;
 
 }

@@ -70,7 +70,7 @@ class Broker
         if ($action->needsContext() && $contextId === null)
             throw new \InvalidArgumentException("Action '$actionName' requires a context id.");
 
-        $result = $action->performAction($actionData, $this);
+        $result = $action->performAction($actionData, $this, $contextId);
         foreach ($result->context_updates as $context_update) {
             $this->contextStorageDriver->withContext($contextId)->processContextMsg($context_update);
         }
