@@ -18,6 +18,7 @@
         "phore/cli2": "*",
         "phore/hydrator": "dev-master",
         "phore/system": "dev-master",
+        "phore/objectstore": "dev-master",
         "lack/openai": "dev-main",
         "lack/keystore": "dev-main",
         "lack/frontmatter": "dev-main"
