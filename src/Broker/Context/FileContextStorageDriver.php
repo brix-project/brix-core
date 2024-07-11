@@ -2,6 +2,7 @@
 
 namespace Brix\Core\Broker\Context;
 
+use Brix\Core\Broker\Message\ContextMsg;
 use Phore\FileSystem\PhoreFile;
 
 class FileContextStorageDriver
@@ -10,23 +11,20 @@ class FileContextStorageDriver
 
     public function __construct(public string $contextPath)
     {
-        phore_dir($this->contextPath)->mkdir("0755");
+        phore_dir($this->contextPath)->mkdir(0755);
     }
 
 
     private $selectedContextId = null;
-    private $selectedActionId = null;
 
 
-    public function selectContext(string $contextId) : string
+    public function withContext(string $contextId) : self
     {
-        $this->selectedContextId = $contextId;
+        $obj= new self($this->contextPath);
+        $obj->selectedContextId = $contextId;
+        return $obj;
     }
 
-    public function selectAction(string $actionId) : string
-    {
-        $this->selectedActionId = $actionId;
-    }
 
 
     private function getStorageFile($contextId) : PhoreFile
@@ -34,19 +32,15 @@ class FileContextStorageDriver
         return phore_file($this->contextPath . '/' . $contextId . '.yml');
     }
 
-    public function getData(string $actionId = null) : array|string|int|null
+    public function getData() : array
     {
-        $data = $this->getStorageFile($this->selectedContextId)->get_yaml();
-        if ($actionId === null)
-            return $data;
-        return $data[$actionId] ?? null;
+        $data = $this->getStorageFile($this->selectedContextId ?? throw new \InvalidArgumentException("No ContextId selected"))->get_yaml();
+        return $data;
     }
 
-    public function setData(string $actionId, mixed $value) : void
+    public function setData(array $data) : void
     {
-        $data = $this->getStorageFile($this->selectedContextId)->get_yaml();
-        $data[$actionId] = $value;
-        $this->getStorageFile($this->selectedContextId)->set_yaml($data);
+        $this->getStorageFile($this->selectedContextId ?? throw new \InvalidArgumentException("No contextId selected"))->set_yaml($data);
     }
 
     public function createContext(string $newContextId, string $shortInfo) : void
@@ -57,13 +51,27 @@ class FileContextStorageDriver
 
     public function getShortInfo()
     {
-        return $this->getData("__shortInfo");
+        return $this->getData()["__shortInfo"] ?? "";
 
     }
 
     public function setShortInfo( string $shortInfo)
     {
-        $this->setData("__shortInfo", $shortInfo);
+        $data = $this->getData();
+        $data["__shortInfo"] = $shortInfo;
+        $this->setData($data);
+    }
+
+
+    public function processContextMsg(ContextMsg $contextMsg) {
+        $data = $this->getData();
+
+        $data[$contextMsg->keyId] = [
+            "desc" => $contextMsg->desc,
+            "updated" => phore_datetime(),
+            "data" => (array)$contextMsg->value,
+        ];
+        $this->setData($data);
     }
 
     public function listContexts(string $filter = null) : array

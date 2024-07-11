@@ -24,7 +24,7 @@ class BrokerActionResponse
     public $data = null;
 
     /**
-     * @var array
+     * @var ContextMsg[]
      */
     public $context_updates = [];
 

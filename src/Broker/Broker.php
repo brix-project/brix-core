@@ -72,8 +72,7 @@ class Broker
 
         $result = $action->performAction($actionData, $this);
         foreach ($result->context_updates as $context_update) {
-            $this->contextStorageDriver->selectContext($contextId);
-            $this->contextStorageDriver->setData($actionName, $context_update);
+            $this->contextStorageDriver->withContext($contextId)->processContextMsg($context_update);
         }
         return $result;
     }

@@ -51,13 +51,28 @@ class Action extends AbstractBrixCommand
 
         $actionData = $this->actionFile->get_yaml($broker->getActionInfo($actionName)->inputClassName);
         print_r ($actionData);
-        $broker->performAction($actionData);
+        $result = $broker->performAction($actionData);
 
+        if ($result->type === "success") {
+            Out::TextSuccess("Action performed successfully: ". $result->message);
+        } else {
+            Out::TextDanger("Action failed: " . $result->message);
+        }
 
+    }
 
+    public function perform() {
+        $broker = Broker::getInstance();
+        $actionData = $this->actionFile->get_yaml();
+        $actionName = $actionData["action_name"];
+        $actionData = $this->actionFile->get_yaml($broker->getActionInfo($actionName)->inputClassName);
+        $result = $broker->performAction($actionData);
 
-        $actionName = array_shift($argv);
-
+        if ($result->type === "success") {
+            Out::TextSuccess("Action performed successfully: ". $result->message);
+        } else {
+            Out::TextDanger("Action failed: " . $result->message);
+        }
     }
 
 

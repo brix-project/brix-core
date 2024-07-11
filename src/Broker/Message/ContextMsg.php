@@ -6,13 +6,13 @@ class ContextMsg
 {
 
     public function __construct(
-        public string $actionId,
-
-        public string $key,
+        public string $keyId,
 
         public string $desc,
 
-        public string $value
-    ) {}
+        public mixed $value
+    ) {
+
+    }
 
 }
