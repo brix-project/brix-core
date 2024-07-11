@@ -1,0 +1,19 @@
+
+
+The expected output should be only the actionName as defined in the following json-schema format. Do not
+provide any more text in output. If unclear about the actionName to output, please return an empty string.
+
+```
+{{defined_actions}}
+```
+
+
+
+---
+
+Return the actionName that fits the following task (based on the description defined before):
+
+```
+{{description}}
+```
+

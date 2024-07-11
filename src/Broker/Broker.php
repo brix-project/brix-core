@@ -61,21 +61,22 @@ class Broker
 
 
 
-    public function performAction (object $action) : BrokerActionResponse {
-        $actionName = $action->action_name ?? throw new \InvalidArgumentException("Missing 'action_name' in action object.");
+
+
+    public function performAction (object $actionData) : BrokerActionResponse {
+        $actionName = $actionData->action_name ?? throw new \InvalidArgumentException("Missing 'action_name' in action object.");
         $action = $this->actions[$actionName] ?? throw new \InvalidArgumentException("Action with name '$actionName' not found.");
         $contextId = $action->context_id ?? null;
         if ($action->needsContext() && $contextId === null)
             throw new \InvalidArgumentException("Action '$actionName' requires a context id.");
 
-        $result = $action->performAction($action, $this);
+        $result = $action->performAction($actionData, $this);
         foreach ($result->context_updates as $context_update) {
             $this->contextStorageDriver->selectContext($contextId);
             $this->contextStorageDriver->setData($actionName, $context_update);
         }
         return $result;
     }
-
 
 
 
