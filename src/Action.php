@@ -5,6 +5,8 @@ namespace Brix\Core;
 use Brix\Core\Broker\Broker;
 use Brix\Core\Broker\AiHelper\BrokerAiPrepareAction;
 use Brix\Core\Broker\CliDoCmd;
+use Brix\MailSpool\Mailspool;
+use Brix\MailSpool\MailSpoolFacet;
 use Phore\Cli\Input\In;
 use Phore\Cli\Output\Out;
 use Phore\FileSystem\PhoreFile;
@@ -66,18 +68,11 @@ class Action extends AbstractBrixCommand
         $data = $aiPrepare->createActionStruct($actionName, $description, $contextId);
 
         $this->actionFile->set_yaml($data);
+        Out::TextInfo("\n\n" . $this->actionFile->get_contents());
         if ( ! In::AskBool("Action created in File $this->actionFile. Perform?.", true))
             return;
 
-        $actionData = $this->actionFile->get_yaml($broker->getActionInfo($actionName)->inputClassName);
-        print_r ($actionData);
-        $result = $broker->performAction($actionData);
-
-        if ($result->type === "success") {
-            Out::TextSuccess("Action performed successfully: ". $result->message);
-        } else {
-            Out::TextDanger("Action failed: " . $result->message);
-        }
+        $this->perform();
 
     }
 
@@ -93,6 +88,13 @@ class Action extends AbstractBrixCommand
         } else {
             Out::TextDanger("Action failed: " . $result->message);
         }
+        
+        if (MailSpoolFacet::getInstance()->hasUnsentMails()) {
+            if (In::AskBool("Mails are spooled. Send all spooled mails?", true)) {
+                MailSpoolFacet::getInstance()->sendMail();
+            }
+        }
+        
     }
 
 
