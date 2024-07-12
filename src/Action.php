@@ -43,7 +43,7 @@ class Action extends AbstractBrixCommand
         Out::TextInfo($broker->contextStorageDriver->withContext($contextId)->getData()["__shortInfo"] ?? "");
     }
 
-    public function create($argv, string) {
+    public function create(array $argv) {
 
         $broker = Broker::getInstance();
         $aiPrepare = new BrokerAiPrepareAction($broker);
