@@ -43,15 +43,15 @@ class Action extends AbstractBrixCommand
         Out::TextInfo($broker->contextStorageDriver->withContext($contextId)->getData()["__shortInfo"] ?? "");
     }
 
-    public function create($argv, string $contextId = null) {
+    public function create($argv, string) {
 
         $broker = Broker::getInstance();
         $aiPrepare = new BrokerAiPrepareAction($broker);
 
-        $selectedContextId = $this->brixEnv->getState("action")->get("selected_context_id");
+        $contextId = $this->brixEnv->getState("action")->get("selected_context_id");
 
-        if ($selectedContextId !== null)
-            Out::TextWarning("Selected Context: $selectedContextId");
+        if ($contextId !== null)
+            Out::TextWarning("**Selected Context:** _{$contextId}_");
 
         $description = implode(" ", $argv);
 

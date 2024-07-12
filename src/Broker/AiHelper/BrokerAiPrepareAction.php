@@ -4,6 +4,7 @@ namespace Brix\Core\Broker\AiHelper;
 
 use Brix\Core\Broker\Broker;
 use Brix\Core\Type\BrixEnv;
+use Phore\Cli\Output\Out;
 
 class BrokerAiPrepareAction
 {
@@ -33,6 +34,10 @@ class BrokerAiPrepareAction
         $context = [];
         if ($contextId !== null)
             $context = $this->broker->contextStorageDriver->getData($contextId);
+
+        if ($actionInfo->needsContext && $contextId === null) {
+            throw new \InvalidArgumentException("Action requires context. Please select a context.");
+        }
 
         $data = $this->broker->brixEnv->getOpenAiQuickFacet()->promptData(__DIR__ . "/createActionStruct-prompt.txt", [
             "output_schema" => $actionInfo->inputSchema,

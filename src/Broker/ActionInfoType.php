@@ -15,6 +15,7 @@ class ActionInfoType
          */
         public string $inputClassName,
 
+        public bool $needsContext,
 
         public string $inputSchema
     )

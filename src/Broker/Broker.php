@@ -52,11 +52,11 @@ class Broker
     }
 
 
-    public function getActionInfo($actionName) {
+    public function getActionInfo($actionName) : ActionInfoType {
          $generator = new JsonSchemaGenerator();
          $action = $this->actions[$actionName] ?? throw new \InvalidArgumentException("Action with name '$actionName' not found.");
          $inputSchema = $generator->convertToJsonSchema($action->getInputClass());
-         return new ActionInfoType($actionName, $action->getDescription(), $action->getInputClass(), $inputSchema);
+         return new ActionInfoType($actionName, $action->getDescription(), $action->getInputClass(), $action->needsContext(), $inputSchema);
     }
 
 
