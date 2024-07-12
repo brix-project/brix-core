@@ -28,11 +28,30 @@ class Action extends AbstractBrixCommand
     }
 
 
+    public function context($argv) {
+
+        $contextId = $argv[0] ?? null;
+        if ($contextId === null) {
+            Out::Table(Broker::getInstance()->contextStorageDriver->listContexts(), false, ["contextId", "shortInfo"]);
+            exit(1);
+        }
+        $broker = Broker::getInstance();
+        if ( ! $broker->contextStorageDriver->withContext($contextId)->exists())
+            throw new \InvalidArgumentException("ContextId not found: $contextId");
+        $this->brixEnv->getState("action")->set("selected_context_id", $contextId);
+        Out::TextSuccess("**Context selected:** _{$contextId}_ \n");
+        Out::TextInfo($broker->contextStorageDriver->withContext($contextId)->getData()["__shortInfo"] ?? "");
+    }
 
     public function create($argv, string $contextId = null) {
 
         $broker = Broker::getInstance();
         $aiPrepare = new BrokerAiPrepareAction($broker);
+
+        $selectedContextId = $this->brixEnv->getState("action")->get("selected_context_id");
+
+        if ($selectedContextId !== null)
+            Out::TextWarning("Selected Context: $selectedContextId");
 
         $description = implode(" ", $argv);
 

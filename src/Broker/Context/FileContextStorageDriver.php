@@ -26,6 +26,11 @@ class FileContextStorageDriver
     }
 
 
+    public function exists() : bool {
+        return $this->getStorageFile($this->selectedContextId ?? throw new \InvalidArgumentException("No contextId selected"))->exists();
+    }
+
+
 
     private function getStorageFile($contextId) : PhoreFile
     {
