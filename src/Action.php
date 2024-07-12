@@ -50,6 +50,7 @@ class Action extends AbstractBrixCommand
 
         $contextId = $this->brixEnv->getState("action")->get("selected_context_id");
 
+        print_r ($contextId);
         if ($contextId !== null)
             Out::TextWarning("**Selected Context:** _{$contextId}_");
 

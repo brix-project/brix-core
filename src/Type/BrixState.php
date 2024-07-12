@@ -26,16 +26,16 @@ class BrixState
     public function get(string $key) : mixed
     {
         $data = $this->loadData();
-        if ($data[$this->scope][$key] ?? null === null)
+        if ( ! isset($data[$this->scope][$key]))
             return null;
         return $data[$this->scope][$key];
     }
 
-    public function set(string $key, $data) : void {
+    public function set(string $key, $val) : void {
         $data = $this->loadData();
         if ( ! isset ($data[$this->scope]))
             $data[$this->scope] = [];
-        $data[$this->scope][$key] = $data;
+        $data[$this->scope][$key] = $val;
         $this->saveData($data);
     }
 

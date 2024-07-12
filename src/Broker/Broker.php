@@ -65,8 +65,9 @@ class Broker
 
     public function performAction (object $actionData) : BrokerActionResponse {
         $actionName = $actionData->action_name ?? throw new \InvalidArgumentException("Missing 'action_name' in action object.");
+        $contextId = $actionData->context_id ?? null;
+        
         $action = $this->actions[$actionName] ?? throw new \InvalidArgumentException("Action with name '$actionName' not found.");
-        $contextId = $action->context_id ?? null;
         if ($action->needsContext() && $contextId === null)
             throw new \InvalidArgumentException("Action '$actionName' requires a context id.");
 
