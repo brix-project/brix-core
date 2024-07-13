@@ -28,9 +28,9 @@ class BrokerActionResponse
      */
     public $context_updates = [];
 
-    public function addContextUpdate(string $key, mixed $value, string $description) : void
+    public function addContextUpdate(string $key, string $description, mixed $value) : void
     {
-        $this->context_updates[] = new ContextMsg($key, $value, $description);
+        $this->context_updates[] = new ContextMsg($key, $description, $value);
     }
 
 }
