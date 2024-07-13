@@ -2,6 +2,7 @@
 
 namespace Brix\Core\Broker;
 
+use Brix\Core\Broker\Logger\Logger;
 use Brix\Core\Broker\Message\ContextMsg;
 
 interface BrokerActionInterface
@@ -19,6 +20,6 @@ interface BrokerActionInterface
 
     public function needsContext() : bool;
 
-    public function performAction(object $input, Broker $broker, ?string $contextId) : BrokerActionResponse;
+    public function performAction(object $input, Broker $broker, Logger $logger, ?string $contextId) : BrokerActionResponse;
 
 }

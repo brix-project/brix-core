@@ -3,6 +3,7 @@
 namespace Brix\Core\Broker;
 use Brix\Core\BrixEnvFactorySingleton;
 use Brix\Core\Broker\Context\FileContextStorageDriver;
+use Brix\Core\Broker\Logger\CliLoggingDriver;
 use Brix\Core\Broker\Message\ContextMsg;
 use Brix\Core\Type\BrixEnv;
 use Lack\OpenAi\Helper\JsonSchemaGenerator;
@@ -19,7 +20,7 @@ class Broker
     private function __construct() {
         $this->brixEnv = BrixEnvFactorySingleton::getInstance()->getEnv();
         $this->contextStorageDriver = new FileContextStorageDriver($this->brixEnv->rootDir . "/.context");
-        $this->logger = new Logger();
+        $this->logger = new Logger(new CliLoggingDriver());
     }
 
 
@@ -75,7 +76,7 @@ class Broker
         if ($action->needsContext() && $contextId === null)
             throw new \InvalidArgumentException("Action '$actionName' requires a context id.");
 
-        $result = $action->performAction($actionData, $this, $contextId);
+        $result = $action->performAction($actionData, $this, $this->logger, $contextId);
         foreach ($result->context_updates as $context_update) {
             $this->contextStorageDriver->withContext($contextId)->processContextMsg($context_update);
         }
