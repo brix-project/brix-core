@@ -12,12 +12,14 @@ class Broker
 
     public readonly BrixEnv $brixEnv;
 
+    public readonly Logger $logger;
 
     public readonly FileContextStorageDriver $contextStorageDriver;
 
     private function __construct() {
         $this->brixEnv = BrixEnvFactorySingleton::getInstance()->getEnv();
         $this->contextStorageDriver = new FileContextStorageDriver($this->brixEnv->rootDir . "/.context");
+        $this->logger = new Logger();
     }
 
 
@@ -66,7 +68,9 @@ class Broker
     public function performAction (object $actionData) : BrokerActionResponse {
         $actionName = $actionData->action_name ?? throw new \InvalidArgumentException("Missing 'action_name' in action object.");
         $contextId = $actionData->context_id ?? null;
-        
+
+
+
         $action = $this->actions[$actionName] ?? throw new \InvalidArgumentException("Action with name '$actionName' not found.");
         if ($action->needsContext() && $contextId === null)
             throw new \InvalidArgumentException("Action '$actionName' requires a context id.");

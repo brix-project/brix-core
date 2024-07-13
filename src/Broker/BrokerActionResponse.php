@@ -8,15 +8,20 @@ class BrokerActionResponse
 {
 
 
-    /**
-     * @var string
-     */
-    public $type = "success";
+    public function __construct(    
+        /**
+         * @var string
+         */
+            public $type = "success",
+    
+        /**
+         * @var string|null
+         */
+        public $message = null
+    )
+    {}
+    
 
-    /**
-     * @var string|null
-     */
-    public $message = null;
 
     /**
      * @var null|array
