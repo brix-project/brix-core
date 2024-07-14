@@ -18,7 +18,7 @@ class FileContextStorageDriver
     private $selectedContextId = null;
 
 
-    public function withContext(string $contextId) : self
+    public function withContext(?string $contextId) : self
     {
         $obj= new self($this->contextPath);
         $obj->selectedContextId = $contextId;
@@ -37,8 +37,10 @@ class FileContextStorageDriver
         return phore_file($this->contextPath . '/' . $contextId . '.yml');
     }
 
-    public function getData() : array
+    public function getData() : array|null
     {
+        if ($this->selectedContextId === null)
+            return null;
         $data = $this->getStorageFile($this->selectedContextId ?? throw new \InvalidArgumentException("No ContextId selected"))->get_yaml();
         return $data;
     }

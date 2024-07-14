@@ -16,7 +16,7 @@ class Broker
 
     public readonly Logger $logger;
 
-    public readonly FileContextStorageDriver $contextStorageDriver;
+    public FileContextStorageDriver $contextStorageDriver;
 
     private function __construct() {
         $this->brixEnv = BrixEnvFactorySingleton::getInstance()->getEnv();
@@ -63,6 +63,9 @@ class Broker
          return new ActionInfoType($actionName, $action->getDescription(), $action->getInputClass(), $action->needsContext(), $inputSchema);
     }
 
+    public function switchContext(string|null $contextId) {
+        $this->contextStorageDriver = $this->contextStorageDriver->withContext($contextId);
+    }
 
 
 

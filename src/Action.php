@@ -52,7 +52,8 @@ class Action extends AbstractBrixCommand
 
         $contextId = $this->brixEnv->getState("action")->get("selected_context_id");
 
-        print_r ($contextId);
+
+
         if ($contextId !== null)
             Out::TextWarning("**Selected Context:** _{$contextId}_");
 
@@ -64,6 +65,11 @@ class Action extends AbstractBrixCommand
             return;
         }
         Out::TextSuccess("Detected action: $actionName");
+
+        $actionInfo = $broker->getActionInfo($actionName);
+        if ( ! $actionInfo->needsContext)
+            $contextId = null;
+
 
         $data = $aiPrepare->createActionStruct($actionName, $description, $contextId);
 
@@ -88,13 +94,13 @@ class Action extends AbstractBrixCommand
         } else {
             Out::TextDanger("Action failed: " . $result->message);
         }
-        
+
         if (MailSpoolFacet::getInstance()->hasUnsentMails()) {
             if (In::AskBool("Mails are spooled. Send all spooled mails?", true)) {
                 MailSpoolFacet::getInstance()->sendMail();
             }
         }
-        
+
     }
 
 
