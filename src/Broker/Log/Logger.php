@@ -1,11 +1,11 @@
 <?php
 
-namespace Brix\Core\Broker\Logger;
+namespace Brix\Core\Broker\Log;
 
 class Logger
 {
 
-    private function __construct(private ?LoggingLevel $driver = null) {
+    public function __construct(private ?LoggingDriver $driver = null) {
         if ($this->driver === null)
             $this->driver = new CliLoggingDriver();
     }

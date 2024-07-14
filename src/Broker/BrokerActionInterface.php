@@ -2,7 +2,7 @@
 
 namespace Brix\Core\Broker;
 
-use Brix\Core\Broker\Logger\Logger;
+use Brix\Core\Broker\Log\Logger;
 use Brix\Core\Broker\Message\ContextMsg;
 
 interface BrokerActionInterface

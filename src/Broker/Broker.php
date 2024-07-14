@@ -3,7 +3,8 @@
 namespace Brix\Core\Broker;
 use Brix\Core\BrixEnvFactorySingleton;
 use Brix\Core\Broker\Context\FileContextStorageDriver;
-use Brix\Core\Broker\Logger\CliLoggingDriver;
+use Brix\Core\Broker\Log\CliLoggingDriver;
+use Brix\Core\Broker\Log\Logger;
 use Brix\Core\Broker\Message\ContextMsg;
 use Brix\Core\Type\BrixEnv;
 use Lack\OpenAi\Helper\JsonSchemaGenerator;

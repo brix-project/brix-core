@@ -1,6 +1,6 @@
 <?php
 
-namespace Brix\Core\Broker\Logger;
+namespace Brix\Core\Broker\Log;
 
 interface LoggingDriver
 {
