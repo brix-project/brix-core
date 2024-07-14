@@ -17,9 +17,14 @@ class BrokerActionResponse
         /**
          * @var string|null
          */
-        public $message = null
+        public $message = null,
+        array|ContextMsg $context_updates = []
     )
-    {}
+    {
+        if ( ! is_array($context_updates))
+            $context_updates = [$context_updates];
+        $this->context_updates = $context_updates;
+    }
     
 
 
