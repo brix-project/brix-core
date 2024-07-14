@@ -73,10 +73,13 @@ class FileContextStorageDriver
     public function processContextMsg(ContextMsg $contextMsg) {
         $data = $this->getData();
 
+        if (is_object($contextMsg->value))
+            $contextMsg->value = (array)$contextMsg->value;
+        
         $data[$contextMsg->keyId] = [
             "desc" => $contextMsg->desc,
             "updated" => phore_datetime(),
-            "data" => (array)$contextMsg->value,
+            "data" => $contextMsg->value,
         ];
         $this->setData($data);
     }
