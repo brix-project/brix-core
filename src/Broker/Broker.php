@@ -16,7 +16,7 @@ class Broker
 
     public readonly Logger $logger;
 
-    public readonly FileContextStorageDriver $contextStorageDriver;
+    public FileContextStorageDriver $contextStorageDriver;
 
     private function __construct() {
         $this->brixEnv = BrixEnvFactorySingleton::getInstance()->getEnv();
@@ -63,6 +63,9 @@ class Broker
          return new ActionInfoType($actionName, $action->getDescription(), $action->getInputClass(), $action->needsContext(), $inputSchema);
     }
 
+    public function switchContext(string|null $contextId) {
+        $this->contextStorageDriver = $this->contextStorageDriver->withContext($contextId);
+    }
 
 
 
@@ -77,9 +80,11 @@ class Broker
         if ($action->needsContext() && $contextId === null)
             throw new \InvalidArgumentException("Action '$actionName' requires a context id.");
 
+        $this->switchContext($contextId);
+
         $result = $action->performAction($actionData, $this, $this->logger, $contextId);
         foreach ($result->context_updates as $context_update) {
-            $this->contextStorageDriver->withContext($contextId)->processContextMsg($context_update);
+            $this->contextStorageDriver->processContextMsg($context_update);
         }
         return $result;
     }
