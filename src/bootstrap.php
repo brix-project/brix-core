@@ -8,7 +8,7 @@ namespace Brix\Core;
 use Phore\Cli\CliDispatcher;
 
 
-CliDispatcher::addClass(Action::class);
+CliDispatcher::addClass(Actions::class);
 
 
 

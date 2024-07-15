@@ -11,7 +11,7 @@ use Phore\Cli\Input\In;
 use Phore\Cli\Output\Out;
 use Phore\FileSystem\PhoreFile;
 
-class Action extends AbstractBrixCommand
+class Actions extends AbstractBrixCommand
 {
 
     private PhoreFile $actionFile;
@@ -45,7 +45,7 @@ class Action extends AbstractBrixCommand
         Out::TextInfo($broker->contextStorageDriver->withContext($contextId)->getData()["__shortInfo"] ?? "");
     }
 
-    public function create(array $argv) {
+    public function prepare(array $argv) {
 
         $broker = Broker::getInstance();
         $aiPrepare = new BrokerAiPrepareAction($broker);

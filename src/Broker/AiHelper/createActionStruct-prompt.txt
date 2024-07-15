@@ -8,11 +8,12 @@ The expected output should be in the following json-schema format:
 
 Follow instructions included in the description of the schema.
 
-To generate the output, use the following data as input:
+To generate the output, use the following data as input (Arguments):
 
 ```
 {{argument_string}}
 ```
+Arguments always supersed the context data below!
 
 and the following context data (provided in json format):
 
