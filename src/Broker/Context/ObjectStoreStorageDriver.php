@@ -107,7 +107,7 @@ class ObjectStoreStorageDriver
     {
         try {
 
-            return $this->objectStore->object('/context/__state.txt')->getJson()["selectedContextId"];
+            return $this->objectStore->object('/context/__state.json')->getJson()["selectedContextId"];
         } catch ( NotFoundException $e) {
             return null;
         }
@@ -115,7 +115,7 @@ class ObjectStoreStorageDriver
 
     public function setSelectedContextId(string|null $contextId) : void
     {
-        $this->objectStore->object('/context/__selected.txt')->putJson(["selectedContextId" => $contextId]);
+        $this->objectStore->object('/context/__state.json')->putJson(["selectedContextId" => $contextId]);
     }
 
     public function rmContext(string $contextId) : void

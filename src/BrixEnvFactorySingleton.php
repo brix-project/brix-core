@@ -18,8 +18,7 @@ class BrixEnvFactorySingleton
         }
         return $instance;
     }
-
-
+    
     public function getEnv() : BrixEnv
     {
         $curDir = phore_dir(getcwd());

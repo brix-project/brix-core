@@ -38,7 +38,7 @@ class BrokerAiPrepareAction
             throw new \InvalidArgumentException("Action requires context. Please select a context.");
         }
         if ($contextId !== null)
-            $context = $this->broker->contextStorageDriver->withContext($contextId)->getData();
+            $context = $this->broker->getContextStorageDriver()->withContext($contextId)->getData();
         
         $data = $this->broker->brixEnv->getOpenAiQuickFacet()->promptData(__DIR__ . "/createActionStruct-prompt.txt", [
             "output_schema" => $actionInfo->inputSchema,
