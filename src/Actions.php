@@ -74,6 +74,23 @@ class Actions extends AbstractBrixCommand
     }
 
 
+    public function context_import($argv) {
+        $fileName = $argv[0] ?? null;
+        if ($fileName === null)
+            throw new \InvalidArgumentException("No filename given.");
+
+        $file = phore_file($fileName);
+        $contextId = $file->getBasename(".yml");
+
+        if (! preg_match("K[0-9]+-[a-z0-9-]+", $contextId))
+            throw new \InvalidArgumentException("Invalid contextId: $contextId");
+
+        $contextData = $file->get_yaml();
+        Broker::getInstance()->getContextStorageDriver()->createContext($contextId, $contextData["__shortInfo"] ?? "");
+        Broker::getInstance()->getContextStorageDriver()->withContext($contextId)->setData($contextData);
+        Out::TextSuccess("Context imported: $contextId");
+    }
+
 
     public function prepare(array $argv) {
 
