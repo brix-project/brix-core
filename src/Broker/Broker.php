@@ -3,11 +3,16 @@
 namespace Brix\Core\Broker;
 use Brix\Core\BrixEnvFactorySingleton;
 use Brix\Core\Broker\Context\FileContextStorageDriver;
+use Brix\Core\Broker\Context\ObjectStoreStorageDriver;
 use Brix\Core\Broker\Log\CliLoggingDriver;
 use Brix\Core\Broker\Log\Logger;
 use Brix\Core\Broker\Message\ContextMsg;
 use Brix\Core\Type\BrixEnv;
+use Lack\Keystore\KeyStore;
 use Lack\OpenAi\Helper\JsonSchemaGenerator;
+use Phore\ObjectStore\Driver\PhoreGoogleObjectStoreDriver;
+use Phore\ObjectStore\Encryption\SodiumSyncEncryption;
+use Phore\ObjectStore\ObjectStore;
 
 class Broker
 {
@@ -16,11 +21,17 @@ class Broker
 
     public readonly Logger $logger;
 
-    public FileContextStorageDriver $contextStorageDriver;
+    public ObjectStoreStorageDriver $contextStorageDriver;
 
     private function __construct() {
         $this->brixEnv = BrixEnvFactorySingleton::getInstance()->getEnv();
-        $this->contextStorageDriver = new FileContextStorageDriver($this->brixEnv->rootDir . "/.context");
+        //$this->contextStorageDriver = new FileContextStorageDriver($this->brixEnv->rootDir . "/.context");
+
+        $accessKey = KeyStore::Get()->getAccessKey("context_store_key", true);
+        $encKey = KeyStore::Get()->getAccessKey("context_store_enc_key");
+        $bucketName = KeyStore::Get()->getAccessKey("context_store_bucket");
+
+        $this->contextStorageDriver = new ObjectStoreStorageDriver(new ObjectStore(new PhoreGoogleObjectStoreDriver($accessKey, $bucketName, false, new SodiumSyncEncryption($encKey))));
         $this->logger = new Logger(new CliLoggingDriver());
     }
 
