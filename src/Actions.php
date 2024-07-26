@@ -10,6 +10,7 @@ use Brix\MailSpool\MailSpoolFacet;
 use Phore\Cli\Input\In;
 use Phore\Cli\Output\Out;
 use Phore\FileSystem\PhoreFile;
+use Phore\FileSystem\PhoreTempFile;
 
 class Actions extends AbstractBrixCommand
 {
@@ -48,21 +49,26 @@ class Actions extends AbstractBrixCommand
 
     public function context_edit($argv) {
         $contextId = $argv[0] ?? null;
+        $tempFile = phore_file("CUR-CONTEXT.yml");
+        $tempFile->unlinkOnClose();
 
         $broker = Broker::getInstance();
         $contextData = $broker->getContextStorageDriver()->withContext($contextId)->getData();
-        phore_file("CUR-CONTEXT.yml")->set_yaml($contextData);
+        $tempFile->set_yaml($contextData);
+
         Out::TextSuccess("Context data written to CUR-CONTEXT.yml");
         In::AskBool("Save changes on exit?", true);
 
-        if (trim(phore_file("CUR-CONTEXT.yml")->get_contents()) === "") {
+
+
+        if (trim($tempFile->get_contents()) === "") {
             if ( ! In::AskBool("Empty context data. Delete context?", true)) {
                 return;
             }
             $broker->getContextStorageDriver()->rmContext($contextId);
             return;
         }
-        $contextData = phore_file("CUR-CONTEXT.yml")->get_yaml();
+        $contextData = $tempFile->get_yaml();
         $broker->getContextStorageDriver()->withContext($contextId)->setData($contextData);
         Out::TextSuccess("Context data saved.");
     }
