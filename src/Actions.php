@@ -82,7 +82,7 @@ class Actions extends AbstractBrixCommand
         $file = phore_file($fileName);
         $contextId = $file->getBasename(".yml");
 
-        if (! preg_match("K[0-9]+-[a-z0-9-]+", $contextId))
+        if (! preg_match("/^K([0-9]+)\-([a-z0-9\-]+)$/", $contextId))
             throw new \InvalidArgumentException("Invalid contextId: $contextId");
 
         $contextData = $file->get_yaml();
