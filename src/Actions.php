@@ -35,6 +35,10 @@ class Actions extends AbstractBrixCommand
 
         $contextId = $argv[0] ?? null;
         if ($contextId === null) {
+            $selectedContextId = Broker::getInstance()->getSelectedContextId();
+            if ($selectedContextId !== null) {
+                Out::TextWarning("**Selected Context.......: $selectedContextId**");
+            }
             Out::Table(Broker::getInstance()->getContextStorageDriver()->listContexts(), false, ["contextId", "shortInfo"]);
             exit(1);
         }
