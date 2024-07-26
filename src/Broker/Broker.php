@@ -21,18 +21,26 @@ class Broker
 
     public readonly Logger $logger;
 
-    public ObjectStoreStorageDriver $contextStorageDriver;
+    public ?ObjectStoreStorageDriver $contextStorageDriver = null;
 
     private function __construct() {
         $this->brixEnv = BrixEnvFactorySingleton::getInstance()->getEnv();
         //$this->contextStorageDriver = new FileContextStorageDriver($this->brixEnv->rootDir . "/.context");
 
-        $accessKey = KeyStore::Get()->getAccessKey("context_store_key", true);
-        $encKey = KeyStore::Get()->getAccessKey("context_store_enc_key");
-        $bucketName = KeyStore::Get()->getAccessKey("context_store_bucket");
 
-        $this->contextStorageDriver = new ObjectStoreStorageDriver(new ObjectStore(new PhoreGoogleObjectStoreDriver($accessKey, $bucketName, false, new SodiumSyncEncryption($encKey))));
         $this->logger = new Logger(new CliLoggingDriver());
+    }
+
+
+    public function getContextStorageDriver() : ObjectStoreStorageDriver {
+        if ($this->contextStorageDriver === null) {
+            $accessKey = KeyStore::Get()->getAccessKey("context_store_key", true);
+            $encKey = KeyStore::Get()->getAccessKey("context_store_enc_key");
+            $bucketName = KeyStore::Get()->getAccessKey("context_store_bucket");
+
+            $this->contextStorageDriver = new ObjectStoreStorageDriver(new ObjectStore(new PhoreGoogleObjectStoreDriver($accessKey, $bucketName, false, new SodiumSyncEncryption($encKey))));
+        }
+        return $this->contextStorageDriver;
     }
 
 
@@ -75,7 +83,7 @@ class Broker
     }
 
     public function switchContext(string|null $contextId) {
-        $this->contextStorageDriver = $this->contextStorageDriver->withContext($contextId);
+        $this->contextStorageDriver = $this->getContextStorageDriver()->withContext($contextId);
     }
 
 
@@ -95,7 +103,7 @@ class Broker
 
         $result = $action->performAction($actionData, $this, $this->logger, $contextId);
         foreach ($result->context_updates as $context_update) {
-            $this->contextStorageDriver->processContextMsg($context_update);
+            $this->getContextStorageDriver()->processContextMsg($context_update);
         }
         return $result;
     }
