@@ -34,23 +34,47 @@ class Actions extends AbstractBrixCommand
 
         $contextId = $argv[0] ?? null;
         if ($contextId === null) {
-            Out::Table(Broker::getInstance()->contextStorageDriver->listContexts(), false, ["contextId", "shortInfo"]);
+            Out::Table(Broker::getInstance()->getContextStorageDriver()->listContexts(), false, ["contextId", "shortInfo"]);
             exit(1);
         }
         $broker = Broker::getInstance();
-        if ( ! $broker->contextStorageDriver->withContext($contextId)->exists())
+        if ( ! $broker->getContextStorageDriver()->withContext($contextId)->exists())
             throw new \InvalidArgumentException("ContextId not found: $contextId");
-        $this->brixEnv->getState("action")->set("selected_context_id", $contextId);
+        $broker->selectContextId($contextId);
         Out::TextSuccess("**Context selected:** _{$contextId}_ \n");
-        Out::TextInfo($broker->contextStorageDriver->withContext($contextId)->getData()["__shortInfo"] ?? "");
+        Out::TextInfo($broker->getContextStorageDriver()->withContext($contextId)->getData()["__shortInfo"] ?? "");
     }
+
+
+    public function context_edit($argv) {
+        $contextId = $argv[0] ?? null;
+
+        $broker = Broker::getInstance();
+        $contextData = $broker->getContextStorageDriver()->withContext($contextId)->getData();
+        phore_file("CUR-CONTEXT.yml")->set_yaml($contextData);
+        Out::TextSuccess("Context data written to CUR-CONTEXT.yml");
+        In::AskBool("Save changes on exit?", true);
+
+        if (trim(phore_file("CUR-CONTEXT.yml")->get_contents()) === "") {
+            if ( ! In::AskBool("Empty context data. Delete context?", true)) {
+                return;
+            }
+            $broker->getContextStorageDriver()->rmContext($contextId);
+            return;
+        }
+        $contextData = phore_file("CUR-CONTEXT.yml")->get_yaml();
+        $broker->getContextStorageDriver()->withContext($contextId)->setData($contextData);
+        Out::TextSuccess("Context data saved.");
+    }
+
+
 
     public function prepare(array $argv) {
 
         $broker = Broker::getInstance();
         $aiPrepare = new BrokerAiPrepareAction($broker);
 
-        $contextId = $this->brixEnv->getState("action")->get("selected_context_id");
+        $contextId = $broker->getSelectedContextId();
 
 
 

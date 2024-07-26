@@ -21,7 +21,7 @@ class Broker
 
     public readonly Logger $logger;
 
-    public ?ObjectStoreStorageDriver $contextStorageDriver = null;
+    private ?ObjectStoreStorageDriver $contextStorageDriver = null;
 
     private function __construct() {
         $this->brixEnv = BrixEnvFactorySingleton::getInstance()->getEnv();
@@ -82,11 +82,19 @@ class Broker
          return new ActionInfoType($actionName, $action->getDescription(), $action->getInputClass(), $action->needsContext(), $inputSchema);
     }
 
+
     public function switchContext(string|null $contextId) {
         $this->contextStorageDriver = $this->getContextStorageDriver()->withContext($contextId);
     }
 
 
+    public function selectContextId(string|null $contextId) {
+        $this->getContextStorageDriver()->setSelectedContextId($contextId);
+    }
+
+    public function getSelectedContextId() : string|null {
+        return $this->getContextStorageDriver()->getSelectedContextId();
+    }
 
 
     public function performAction (object $actionData) : BrokerActionResponse {
@@ -99,7 +107,7 @@ class Broker
         if ($action->needsContext() && $contextId === null)
             throw new \InvalidArgumentException("Action '$actionName' requires a context id.");
 
-        $this->switchContext($contextId);
+        $this->selectContextId($contextId);
 
         $result = $action->performAction($actionData, $this, $this->logger, $contextId);
         foreach ($result->context_updates as $context_update) {

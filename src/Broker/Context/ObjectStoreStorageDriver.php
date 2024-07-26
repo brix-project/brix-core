@@ -51,11 +51,13 @@ class ObjectStoreStorageDriver
     public function setData(array $data) : void
     {
         $this->getStorageFile($this->selectedContextId ?? throw new \InvalidArgumentException("No contextId selected"))->putJson($data);
+        $this->updateIndex($this->selectedContextId, $data["__shortInfo"] ?? "", $data["__created"] ?? phore_datetime());
     }
 
     public function createContext(string $newContextId, string $shortInfo) : void
     {
         $this->getStorageFile($newContextId, '')->putJson(["__shortInfo" => $shortInfo, "__created" => phore_datetime()]);
+        $this->updateIndex($newContextId, $shortInfo, phore_datetime());
     }
 
 
@@ -88,11 +90,11 @@ class ObjectStoreStorageDriver
     }
 
 
-    protected function updateIndex($contextId, $shortInfo) {
+    protected function updateIndex($contextId, $shortInfo, $created) {
         $index = $this->objectStore->object('/context/__index.json');
         $data = $index->getJson();
-        $data[$contextId] = $shortInfo;
-        $index->putJson($data);
+        $data[$contextId] = ["shortInfo" => $shortInfo, "created" => $created];
+        $index->putJson($data, true);
     }
 
 
@@ -100,7 +102,7 @@ class ObjectStoreStorageDriver
     {
         try {
 
-            return $this->objectStore->object('/context/__state.txt')->get();
+            return $this->objectStore->object('/context/__state.txt')->getJson()["selectedContextId"];
         } catch ( NotFoundException $e) {
             return null;
         }
@@ -108,27 +110,33 @@ class ObjectStoreStorageDriver
 
     public function setSelectedContextId(string|null $contextId) : void
     {
-        $this->objectStore->object('/context/__selected.txt')->put($contextId ?? "");
+        $this->objectStore->object('/context/__selected.txt')->putJson(["selectedContextId" => $contextId]);
+    }
+
+    public function rmContext(string $contextId) : void
+    {
+        $this->objectStore->object('/context/' . $contextId . '.json')->remove();
+        $index = $this->objectStore->object('/context/__index.json')->getJson();
+        unset($index[$contextId]);
+        $this->objectStore->object('/context/__index.json')->putJson($index, true);
     }
 
     public function listContexts(string $filter = null) : array
     {
         $ret = [];
-        foreach (phore_dir($this->contextPath)->listFiles() as $file) {
-            if ( ! $file->isFile())
-                continue;
-            if ($file->getExtension() !== "yml")
-                continue;
-            $contextId = $file->getFilename();
-            $data = $file->get_yaml();
-            $shortInfo = $data["__shortInfo"] ?? throw new \InvalidArgumentException("Invalid context file: $contextId");
-
+        try {
+            $this->objectStore->object('/context/__index.json')->getJson();
+        } catch (NotFoundException $e) {
+            $this->objectStore->object('/context/__index.json')->putJson([]);
+        }
+        $index = $this->objectStore->object('/context/__index.json')->getJson();
+        foreach ($index as $contextId => $info) {
             if ($filter !== null) {
-                if ( ! str_contains($shortInfo, $filter) && ! str_contains($contextId, $filter))
+                if ( ! str_contains($info["shortInfo"], $filter) && ! str_contains($contextId, $filter))
                     continue;
             }
 
-            $ret[] = ["contextId" => $contextId, "shortInfo" => $shortInfo, "created" => $data["__created"]];
+            $ret[] = ["contextId" => $contextId, "shortInfo" => $info["shortInfo"], "created" => $info["created"] ?? ""];
         }
         return $ret;
     }
