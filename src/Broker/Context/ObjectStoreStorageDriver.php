@@ -45,7 +45,7 @@ class ObjectStoreStorageDriver
         if ($this->selectedContextId === null)
             return null;
         try {
-            $data = $this->getStorageFile($this->selectedContextId ?? throw new \InvalidArgumentException("No ContextId selected"))->getJson();
+            $data = $this->getStorageFile($this->selectedContextId)->getJson();
             return $data;
         } catch (NotFoundException $e) {
             throw new \InvalidArgumentException("Context '$this->selectedContextId' not found.");

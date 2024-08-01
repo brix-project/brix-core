@@ -8,24 +8,25 @@ class BrokerActionResponse
 {
 
 
-    public function __construct(    
+    public function __construct(
         /**
          * @var string
          */
             public $type = "success",
-    
+
         /**
          * @var string|null
          */
         public $message = null,
-        array|ContextMsg $context_updates = []
+        array|ContextMsg $context_updates = [],
+        public readonly string|null $switchToContextId = null
     )
     {
         if ( ! is_array($context_updates))
             $context_updates = [$context_updates];
         $this->context_updates = $context_updates;
     }
-    
+
 
 
     /**
