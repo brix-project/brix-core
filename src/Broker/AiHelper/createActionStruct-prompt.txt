@@ -13,13 +13,15 @@ To generate the output, use the following data as input (Arguments):
 ```
 {{argument_string}}
 ```
-Arguments always supersed the context data below!
+
 
 and the following context data (provided in json format):
 
 ```
 {{context_json}}
 ```
+
+If information ist both present in Arguments and Context, Arguments should be used.
 
 ---
 
