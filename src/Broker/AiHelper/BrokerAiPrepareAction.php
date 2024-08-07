@@ -42,14 +42,23 @@ class BrokerAiPrepareAction
 
         //$altPreparePrompt = $this->broker->getAction($actionName)->performPreAction($description, $this->broker, $this->broker->logger, $contextId);
 
+        $action = $this->broker->getAction($actionName);
+
+        $additionalPrompt = "";
+        $fragments = $action->getPrepareOptionalPromptFragments($this->broker, $this->broker->logger, $contextId);
+        foreach ($fragments as $fragment) {
+            $additionalPrompt .= "\n" . $fragment->toPromptString();
+        }
+
         $data = $this->broker->brixEnv->getOpenAiQuickFacet()->promptData(__DIR__ . "/createActionStruct-prompt.txt", [
             "output_schema" => $actionInfo->inputSchema,
             "argument_string" => $description,
             "context_json" => json_encode($context),
-            "alt_prepare_prompt" => $altPreparePrompt ?? ""
+            "alt_prepare_prompt" => $altPreparePrompt ?? "",
+            "additional_prompt" => $additionalPrompt
         ], $actionInfo->inputClassName, true);
 
-        $data = $this->broker->getAction($actionName)->performPreAction($data, $this->broker, $this->broker->logger, $contextId);
+        $data = $action->performPreAction($data, $this->broker, $this->broker->logger, $contextId);
 
         $data = [
             "action_name" => null,

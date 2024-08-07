@@ -124,7 +124,9 @@ class Actions extends AbstractBrixCommand
 
         $data = $aiPrepare->createActionStruct($actionName, $description, $contextId);
 
-        $this->actionFile->set_yaml($data);
+        $data = phore_object_to_array($data);
+        print_r ($data);
+        $this->actionFile->set_yaml(phore_object_to_array($data));
         Out::TextInfo("\n\n" . $this->actionFile->get_contents());
         if ( ! In::AskBool("Action created in File $this->actionFile. Perform?.", true))
             return;

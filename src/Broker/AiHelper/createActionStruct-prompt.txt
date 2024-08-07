@@ -22,6 +22,9 @@ and the following context data (provided in json format):
 ```
 
 
+{{additional_prompt}}
+
+
 ---
 
 Output the content generated from the input data. It must fit the outputs json-schema format!

@@ -6,6 +6,12 @@ use Brix\Core\Broker\Log\Logger;
 
 abstract class AbstractBrokerAction implements BrokerActionInterface
 {
+
+    public function getPrepareOptionalPromptFragments(Broker $broker, Logger $logger, ?string $contextId) : array
+    {
+        return [];
+
+    }
     public function performPreAction(object $input, Broker $broker, Logger $logger, ?string $contextId): object
     {
         return $input; // Pass thru

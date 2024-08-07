@@ -4,6 +4,7 @@ namespace Brix\Core\Broker;
 
 use Brix\Core\Broker\Log\Logger;
 use Brix\Core\Broker\Message\ContextMsg;
+use Leuffen\Shiller\Type\T_PromptFragment;
 
 interface BrokerActionInterface
 {
@@ -20,6 +21,14 @@ interface BrokerActionInterface
      */
     public function performPreAction(object $input, Broker $broker, Logger $logger, ?string $contextId) : object;
 
+
+    /**
+     *
+     * expects
+     *
+     * @return T_PromptFragment[]
+     */
+    public function getPrepareOptionalPromptFragments(Broker $broker, Logger $logger, ?string $contextId) : array;
 
 
     public function getStateClass() : string;
