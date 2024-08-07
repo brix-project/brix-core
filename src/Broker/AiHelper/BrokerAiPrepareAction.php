@@ -32,19 +32,24 @@ class BrokerAiPrepareAction
     {
         $actionInfo = $this->broker->getActionInfo($actionName);
         $context = [];
-        
+
 
         if ($actionInfo->needsContext && $contextId === null) {
             throw new \InvalidArgumentException("Action requires context. Please select a context.");
         }
         if ($contextId !== null)
             $context = $this->broker->getContextStorageDriver()->withContext($contextId)->getData();
-        
+
+        //$altPreparePrompt = $this->broker->getAction($actionName)->performPreAction($description, $this->broker, $this->broker->logger, $contextId);
+
         $data = $this->broker->brixEnv->getOpenAiQuickFacet()->promptData(__DIR__ . "/createActionStruct-prompt.txt", [
             "output_schema" => $actionInfo->inputSchema,
             "argument_string" => $description,
-            "context_json" => json_encode($context)
+            "context_json" => json_encode($context),
+            "alt_prepare_prompt" => $altPreparePrompt ?? ""
         ], $actionInfo->inputClassName, true);
+
+        $data = $this->broker->getAction($actionName)->performPreAction($data, $this->broker, $this->broker->logger, $contextId);
 
         $data = [
             "action_name" => null,
@@ -53,6 +58,7 @@ class BrokerAiPrepareAction
         ];
         $data["action_name"] = $actionName;
         $data["context_id"] = $contextId;
+
         return $data;
     }
 

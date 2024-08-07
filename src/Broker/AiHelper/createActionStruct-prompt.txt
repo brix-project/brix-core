@@ -1,12 +1,12 @@
 
 
-The expected output should be in the following json-schema format:
-
+The expected output must be in the following output json-schema format:
 ```
 {{output_schema}}
 ```
+Follow instructions included in the descriptions of the output schema!
 
-Follow instructions included in the description of the schema.
+{{alt_prepare_prompt}}
 
 To generate the output, use the following data as input (Arguments):
 
@@ -21,6 +21,8 @@ and the following context data (provided in json format):
 {{context_json}}
 ```
 
+
+
 ---
 
-Output the content generated from the input data.
+Output the content generated from the input data. It must fit the outputs json-schema format!

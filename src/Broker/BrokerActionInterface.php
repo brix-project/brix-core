@@ -14,7 +14,13 @@ interface BrokerActionInterface
 
     public function getInputClass() : string;
 
-    public function getOutputClass() : string;
+    /**
+     * Perfrom additional Prepare Step before the data is made available to the user.
+     * @return array|null
+     */
+    public function performPreAction(object $input, Broker $broker, Logger $logger, ?string $contextId) : object;
+
+
 
     public function getStateClass() : string;
 

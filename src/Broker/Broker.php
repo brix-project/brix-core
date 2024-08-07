@@ -82,6 +82,11 @@ class Broker
          return new ActionInfoType($actionName, $action->getDescription(), $action->getInputClass(), $action->needsContext(), $inputSchema);
     }
 
+    public function getAction($actionName) : BrokerActionInterface {
+        return $this->actions[$actionName] ?? throw new \InvalidArgumentException("Action with name '$actionName' not found.");
+    }
+
+
 
     public function switchContext(string|null $contextId) {
         $this->contextStorageDriver = $this->getContextStorageDriver()->withContext($contextId);
