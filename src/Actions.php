@@ -53,6 +53,14 @@ class Actions extends AbstractBrixCommand
 
     public function context_edit($argv) {
         $contextId = $argv[0] ?? null;
+        if ($contextId === null) {
+            $selectedContextId = Broker::getInstance()->getSelectedContextId();
+            if ($selectedContextId !== null) {
+                Out::TextWarning("**Selected Context.......: $selectedContextId**");
+            }
+            $contextId = $selectedContextId;
+        }
+
         $tempFile = phore_file("CUR-CONTEXT.yml");
         $tempFile->unlinkOnClose();
 
