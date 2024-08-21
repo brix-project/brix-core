@@ -5,6 +5,7 @@ namespace Brix\Core;
 use Brix\Core\Broker\Broker;
 use Brix\Core\Broker\AiHelper\BrokerAiPrepareAction;
 use Brix\Core\Broker\CliDoCmd;
+use Brix\Core\Broker\Message\ContextMsg;
 use Brix\MailSpool\Mailspool;
 use Brix\MailSpool\MailSpoolFacet;
 use Phore\Cli\Input\In;
@@ -61,7 +62,10 @@ class Actions extends AbstractBrixCommand
         $tempFile->set_yaml($contextData);
 
         Out::TextSuccess("Context data written to CUR-CONTEXT.yml");
-        In::AskBool("Save changes on exit?", true);
+        if ( ! In::AskBool("Save changes?", true)) {
+            Out::TextDanger("Abort");
+            return;
+        }
 
 
 
@@ -84,15 +88,49 @@ class Actions extends AbstractBrixCommand
             throw new \InvalidArgumentException("No filename given.");
 
         $file = phore_file($fileName);
-        $contextId = $file->getBasename(".yml");
+        $contextId = $file->getDirname()->getBasename();
 
-        if (! preg_match("/^K([0-9]+)\-([a-z0-9\-]+)$/", $contextId))
+        if (! preg_match("/^K([0-9]+)\-([a-z0-9\-]+)$/", $contextId, $matches))
             throw new \InvalidArgumentException("Invalid contextId: $contextId");
 
-        $contextData = $file->get_yaml();
-        Broker::getInstance()->getContextStorageDriver()->createContext($contextId, $contextData["__shortInfo"] ?? "");
-        Broker::getInstance()->getContextStorageDriver()->withContext($contextId)->setData($contextData);
+        $message = new ContextMsg("crm.customer_data", "The billing address of the customer. Use as main address if nothing other is specified", $file->get_yaml());
+        $subMessage = new ContextMsg("subscription_id", "The subscription_id for this customer.", $matches[2] . "-k" . $matches[1]);
+        $shortInfo = ($message->value["address"] ?? "Unkown Address") . "\nEMail: " . ($message->value["email"] ?? "Unknown Email") . "\nMANUAL IMPORT!";
+
+
+
+        $storageDriver = Broker::getInstance()->getContextStorageDriver();
+        if ($storageDriver->withContext($contextId)->exists()
+            && ! In::AskBool("Context already exists. Overwrite?", false))
+            return;
+        $storageDriver->createContext($contextId, $shortInfo);
+        $storageDriver->withContext($contextId)->processContextMsg($message);
+        $storageDriver->withContext($contextId)->processContextMsg($subMessage);
+
+        $storageDriver->withContext($contextId)->processContextMsg(new ContextMsg(
+            "gitops.subscription_id", "The subscription_id of the created subscription", $subMessage->value
+        ));
+        $storageDriver->withContext($contextId)->processContextMsg(new ContextMsg(
+            "website:UNKNOWN-DOMAIN.DE", "Website created", ["domain" => "UNKNOWN-DOMAIN.de", "repo"=>"leu-web-" . $subMessage->value, "subscription_id" => $subMessage->value, "contentInfo" => ""]
+        ));#
+        $storageDriver->withContext($contextId)->processContextMsg(new ContextMsg(
+            "internetx.domain:UNKNOWN-DOMAIN.DE", "The top-level-domain registered", ["domain" => "UNKNOWN-DOMAIN.de", "created"=>phore_datetime(), "payment_due" => "01"]
+        ));
+        $storageDriver->withContext($contextId)->processContextMsg(new ContextMsg(
+            "mailbox-org.domain:UNKNOWN-DOMAIN.DE", "Domain is connected to mailbox.org", "UNKNOWN-DOMAIN.de"
+        ));
+        $storageDriver->withContext($contextId)->processContextMsg(new ContextMsg(
+            "mailbox-org.mail:ALIAS@UNKNOWN-DOMAIN.DE", "Mail account created", [
+                "account" => "ALIAS@UNKNOWN-DOMAIN.DE",
+                "payment_due" => "01",
+                "aliases" => []
+            ]
+        ));
         Out::TextSuccess("Context imported: $contextId");
+
+        if (In::AskBool("Edit?", true)) {
+            $this->context_edit([$contextId]);
+        }
     }
 
 
