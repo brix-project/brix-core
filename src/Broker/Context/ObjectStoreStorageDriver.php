@@ -53,6 +53,15 @@ class ObjectStoreStorageDriver
 
     }
 
+
+    public function getValue($key) : mixed
+    {
+        $data = $this->getData();
+        if (isset($data[$key]))
+            return $data[$key]["data"];
+        return null;
+    }
+
     public function setData(array $data) : void
     {
         $this->getStorageFile($this->selectedContextId ?? throw new \InvalidArgumentException("No contextId selected"))->putJson($data);
