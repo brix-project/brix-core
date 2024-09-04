@@ -142,19 +142,36 @@ class Actions extends AbstractBrixCommand
     }
 
 
-    public function prepare(array $argv) {
+    public function prepare(array $argv, bool $editor = false, bool $new = false) {
 
         $broker = Broker::getInstance();
         $aiPrepare = new BrokerAiPrepareAction($broker);
 
         $contextId = $broker->getSelectedContextId();
 
+        $description = implode(" ", $argv);
+        $tmpName = phore_file("/tmp/last_prepare_input.txt");
+
+        if ($new)
+            $tmpName->set_contents("");
+
+        if (count($argv) === 0 || $editor) {
+            passthru("editor $tmpName", $ret);
+            if ($ret !== 0)
+                throw new \InvalidArgumentException("Editor failed.");
+            $description = $tmpName->get_contents();
+            echo "Description: $description\n";
+            In::AskBool("Continue with prepared data?", true);
+
+        }
+
+        $tmpName->set_contents($description);
 
 
         if ($contextId !== null)
             Out::TextWarning("**Selected Context:** _{$contextId}_");
 
-        $description = implode(" ", $argv);
+
 
         $actionName = $aiPrepare->selectActionByDescription($description);
         if ($actionName === null) {
