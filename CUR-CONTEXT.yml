@@ -1,0 +1,63 @@
+---
+__shortInfo: |-
+  Birte Jahn
+  physio aktiv GmbH
+  Aktienstr. 227
+  45473 Mülheim
+  EMail: birte.jahn@web.de
+  MANUAL IMPORT!
+__created: "2024-08-21T10:56:03+02:00"
+crm.customer_data:
+  desc: The billing address of the customer. Use as main address if nothing other
+    is specified
+  updated: "2024-08-21T10:56:04+02:00"
+  data:
+    customerId: K88
+    email: birte.jahn@web.de
+    address: |-
+      Birte Jahn
+      physio aktiv GmbH
+      Aktienstr. 227
+      45473 Mülheim
+    info: ""
+    salutation: Sehr geehrte Frau Jahn
+    tenant_id: leuffen
+    phone: ""
+    mobile: 01773863713
+    customerSlug: b-jahn
+    assets: []
+subscription_id:
+  desc: The subscription_id for this customer.
+  updated: "2024-08-21T10:56:05+02:00"
+  data: b-jahn-k88
+gitops.subscription_id:
+  desc: The subscription_id of the created subscription
+  updated: "2024-08-21T10:56:06+02:00"
+  data: b-jahn-k88
+website:physioaktiv-muelheim.de:
+  desc: Website created
+  updated: "2024-08-21T10:56:06+02:00"
+  data:
+    domain: physioaktiv-muelheim.de
+    repo: leu-web-b-jahn-k88
+    subscription_id: b-jahn-k88
+    contentInfo: ""
+internetx.domain:physioaktiv-muelheim.de:
+  desc: The top-level-domain registered
+  updated: "2024-08-21T10:56:07+02:00"
+  data:
+    domain: physioaktiv-muelheim.de
+    created: "2024-06-21T10:56:07+02:00"
+    payment_due: "06"
+mailbox-org.domain:physioaktiv-muelheim.de:
+  desc: Domain is connected to mailbox.org
+  updated: "2024-08-21T10:56:08+02:00"
+  data: physioaktiv-muelheim.de
+mailbox-org.mail:kontakt@physioaktiv-muelheim.de:
+  desc: Mail account created
+  updated: "2024-08-21T10:56:09+02:00"
+  data:
+    account: koontakt@physioaktiv-muelheim.de
+    payment_due: "06"
+    aliases: []
+...

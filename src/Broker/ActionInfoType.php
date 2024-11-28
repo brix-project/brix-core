@@ -17,7 +17,7 @@ class ActionInfoType
 
         public bool $needsContext,
 
-        public string $inputSchema
+        public string|array $inputSchema
     )
     {
 
