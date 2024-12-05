@@ -51,7 +51,7 @@ class BrokerAiPrepareAction
         }
 
         $data = $this->broker->brixEnv->getOpenAiQuickFacet()->promptData(__DIR__ . "/createActionStruct-prompt.txt", [
-            "output_schema" => $actionInfo->inputSchema,
+            "output_schema" => is_array($actionInfo->inputSchema) ? json_encode($actionInfo->inputSchema): $actionInfo->inputSchema,
             "argument_string" => $description,
             "context_json" => json_encode($context),
             "alt_prepare_prompt" => $altPreparePrompt ?? "",
