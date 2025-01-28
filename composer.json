@@ -16,12 +16,12 @@
         "php": ">=8.1",
         "phore/filesystem": "*",
         "phore/cli2": "*",
-        "phore/hydrator": "dev-master",
-        "phore/system": "dev-master",
-        "phore/objectstore": "dev-master",
-        "lack/openai": "dev-main",
-        "lack/keystore": "dev-main",
-        "lack/frontmatter": "dev-main"
+        "phore/hydrator": "*",
+        "phore/system": "*",
+        "phore/objectstore": "*",
+        "lack/openai": "*",
+        "lack/keystore": "*",
+        "lack/frontmatter": "*"
     },
 
     "require-dev": {
