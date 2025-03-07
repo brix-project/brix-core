@@ -123,6 +123,7 @@ class Broker
                 $this->getContextStorageDriver()->withContext($contextId)->processContextMsg($context_update);
 
         }
+
         return $result;
     }
 

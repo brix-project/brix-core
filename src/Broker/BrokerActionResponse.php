@@ -19,7 +19,7 @@ class BrokerActionResponse
          */
         public $message = null,
         array|ContextMsg $context_updates = [],
-        public readonly string|null $switchToContextId = null
+        public string|null $switchToContextId = null
     )
     {
         if ( ! is_array($context_updates))
