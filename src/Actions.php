@@ -38,7 +38,7 @@ class Actions extends AbstractBrixCommand
         
         $selectedContextId = Broker::getInstance()->getSelectedContextId();
         if ($selectedContextId !== null) {
-            Out::TextWarning("**Selected Context.......: $selectedContextId**");
+            Out::TextWarning("**Current Context.......: $selectedContextId**");
         }
         $contextList = Broker::getInstance()->getContextStorageDriver()->listContexts($filter);
         
@@ -46,9 +46,11 @@ class Actions extends AbstractBrixCommand
         if (count($contextList) === 0) {
             Out::TextWarning("No contexts found.");
             return;
-        } 
+        }
+        Out::TextInfo("**Available Contexts:**");
+        Out::Table($contextList, false, ["contextId", "shortInfo"]);
         if (count($contextList) > 1) {
-            Out::Table($contextList, false, ["contextId", "shortInfo"]);
+            
             return;
         }
         $contextId = $contextList[0]["contextId"];
