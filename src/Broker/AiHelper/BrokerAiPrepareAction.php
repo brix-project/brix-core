@@ -49,7 +49,7 @@ class BrokerAiPrepareAction
         foreach ($fragments as $fragment) {
             $additionalPrompt .= "\n" . $fragment->toPromptString();
         }
-
+        
         $data = $this->broker->brixEnv->getOpenAiQuickFacet()->promptData(__DIR__ . "/createActionStruct-prompt.txt", [
             "output_schema" => is_array($actionInfo->inputSchema) ? json_encode($actionInfo->inputSchema): $actionInfo->inputSchema,
             "argument_string" => $description,

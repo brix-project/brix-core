@@ -34,15 +34,29 @@ class Actions extends AbstractBrixCommand
 
     public function context($argv) {
 
-        $contextId = $argv[0] ?? null;
-        if ($contextId === null) {
-            $selectedContextId = Broker::getInstance()->getSelectedContextId();
-            if ($selectedContextId !== null) {
-                Out::TextWarning("**Selected Context.......: $selectedContextId**");
-            }
-            Out::Table(Broker::getInstance()->getContextStorageDriver()->listContexts(), false, ["contextId", "shortInfo"]);
-            exit(1);
+        $filter = $argv[0] ?? null;
+        
+        $selectedContextId = Broker::getInstance()->getSelectedContextId();
+        if ($selectedContextId !== null) {
+            Out::TextWarning("**Selected Context.......: $selectedContextId**");
         }
+        $contextList = Broker::getInstance()->getContextStorageDriver()->listContexts($filter);
+        
+       
+        if (count($contextList) === 0) {
+            Out::TextWarning("No contexts found.");
+            return;
+        } 
+        if (count($contextList) > 1) {
+            Out::Table($contextList, false, ["contextId", "shortInfo"]);
+            return;
+        }
+        $contextId = $contextList[0]["contextId"];
+        
+        if ($contextId !== $filter) {
+            In::AskBool("Switch to context '$contextId'?", true);
+        }
+        
         $broker = Broker::getInstance();
         if ( ! $broker->getContextStorageDriver()->withContext($contextId)->exists())
             throw new \InvalidArgumentException("ContextId not found: $contextId");
