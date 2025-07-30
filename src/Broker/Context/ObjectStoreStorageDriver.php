@@ -146,7 +146,7 @@ class ObjectStoreStorageDriver
         $index = $this->objectStore->object('/context/__index.json')->getJson();
         foreach ($index as $contextId => $info) {
             if ($filter !== null) {
-                if ( ! str_contains($info["shortInfo"], $filter) && ! str_contains($contextId, $filter))
+                if ( ! str_contains(strtolower($info["shortInfo"]), strtolower($filter)) && ! str_contains(strtolower($contextId), strtolower($filter)))
                     continue;
             }
 
