@@ -1,0 +1,3 @@
+version: '1.0'
+context: |
+  Beispiel-App für direkte CLI-Kommandos und Broker-Actions.
